@@ -6,7 +6,7 @@ Multi-class text classification pipeline built for a Generative AI lab assignmen
 
 ---
 
-## 📋 Project Info
+## Project Info
 
 | Field                | Details           |
 | -------------------- | ----------------- |
