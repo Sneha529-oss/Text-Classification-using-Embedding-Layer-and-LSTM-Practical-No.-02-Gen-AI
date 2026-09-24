@@ -6,7 +6,7 @@ Multi-class text classification pipeline built for a Generative AI lab assignmen
 
 ---
 
-## 📋 Project Info
+##  Project Info
 
 | Field                | Details           |
 | -------------------- | ----------------- |
@@ -18,11 +18,11 @@ Multi-class text classification pipeline built for a Generative AI lab assignmen
 
 ---
 
-## 🎯 Problem Statement
+## Problem Statement
 
 Build a multi-class text classification model using an Embedding layer and a Long Short-Term Memory (LSTM) network to classify text into different emotion categories. Train the model on the Emotion dataset and evaluate its performance using accuracy, precision, recall, F1-score and a confusion matrix.
 
-## 🎯 Objective
+## Objective
 
 To develop and evaluate an LSTM-based text classification model that can identify the emotion expressed in a given text.
 
