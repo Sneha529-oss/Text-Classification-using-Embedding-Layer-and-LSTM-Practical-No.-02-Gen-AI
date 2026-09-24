@@ -28,7 +28,7 @@ To develop and evaluate an LSTM-based text classification model that can identif
 
 ---
 
-## 📦 Dataset
+## Dataset
 
 | Field         | Details                                                                                     |
 | ------------- | ------------------------------------------------------------------------------------------- |
@@ -49,7 +49,7 @@ The dataset is **class-imbalanced** (Joy and Sadness dominate; Surprise is the r
 
 ---
 
-## 🧠 Model Architecture
+## Model Architecture
 
 ```
 Text Input → Tokenization → Padding → Embedding → LSTM → Dropout → Dense → Softmax
@@ -68,7 +68,7 @@ Text Input → Tokenization → Padding → Embedding → LSTM → Dropout → D
 
 ---
 
-## 🔄 Workflow
+## Workflow
 
 1. Import libraries and load the dataset
 2. Exploratory data analysis (class distribution, text length)
@@ -82,7 +82,7 @@ Text Input → Tokenization → Padding → Embedding → LSTM → Dropout → D
 
 ---
 
-## 📊 Results
+## Results
 
 **Training summary:** Training ran on a GPU and stopped early at epoch 7 (EarlyStopping, patience = 4). The weights from the **best epoch (epoch 3, lowest validation loss)** were restored and used for all evaluation below. The model has **1,420,230 trainable parameters (5.42 MB)**, with a vocabulary of 10,000 words and a padded sequence length of 41.
 
