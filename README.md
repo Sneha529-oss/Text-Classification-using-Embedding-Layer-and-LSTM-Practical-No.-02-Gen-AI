@@ -6,7 +6,7 @@ Multi-class text classification pipeline built for a Generative AI lab assignmen
 
 ---
 
-##  Project Info
+## 📋 Project Info
 
 | Field                | Details           |
 | -------------------- | ----------------- |
@@ -64,7 +64,7 @@ Text Input → Tokenization → Padding → Embedding → LSTM → Dropout → D
 | `Dropout(0.3)`                         | Regularisation                                                 |
 | `Dense(6, softmax)`                    | Probability for each of the 6 emotions                         |
 
-**Training setup:** Adam optimizer (lr = 1e-3), sparse categorical cross-entropy loss, batch size 64, up to 25 epochs with `EarlyStopping` (restores best weights) and `ReduceLROnPlateau`, class weights for imbalance.
+**Training setup:** Adam optimizer (lr = 1e-3), sparse categorical cross-entropy loss, batch size 64, up to 25 epochs with `EarlyStopping` (restores best weights) and `ReduceLROnPlateau`, class weights for imbalance. In the final run training stopped at epoch 7 and the best weights (epoch 3) were restored.
 
 ---
 
@@ -84,46 +84,70 @@ Text Input → Tokenization → Padding → Embedding → LSTM → Dropout → D
 
 ## 📊 Results
 
-> Replace the `XX.XX` values with the numbers printed in the executed notebook (Section 22: Result).
+**Training summary:** Training ran on a GPU and stopped early at epoch 7 (EarlyStopping, patience = 4). The weights from the **best epoch (epoch 3, lowest validation loss)** were restored and used for all evaluation below. The model has **1,420,230 trainable parameters (5.42 MB)**, with a vocabulary of 10,000 words and a padded sequence length of 41.
+
+**Loss and accuracy:**
+
+| Split      | Loss   | Accuracy |
+| ---------- | ------ | -------- |
+| Train      | 0.1412 | 0.9544   |
+| Validation | 0.3287 | 0.9075   |
+| Test       | 0.3564 | **0.8905** |
 
 **Test Set Results:**
 
-| Metric               | Value  |
-| -------------------- | ------ |
-| Test Accuracy        | XX.XX  |
-| Macro Precision      | XX.XX  |
-| Macro Recall         | XX.XX  |
-| Macro F1-score       | XX.XX  |
-| Weighted F1-score    | XX.XX  |
-| Test Loss            | XX.XX  |
-| Best Epoch           | XX     |
-| Total Parameters     | XX,XXX,XXX |
+| Metric             | Value  |
+| ------------------ | ------ |
+| Test Accuracy      | 0.8905 |
+| Macro Precision    | 0.8335 |
+| Macro Recall       | 0.8867 |
+| Macro F1-score     | 0.8535 |
+| Weighted Precision | 0.9003 |
+| Weighted Recall    | 0.8905 |
+| Weighted F1-score  | 0.8930 |
+| Test Loss          | 0.3564 |
 
-**Per-class performance (test set):**
+**Classification Report (test set, 2,000 samples):**
 
-| Emotion  | Precision | Recall | F1-score |
-| -------- | --------- | ------ | -------- |
-| Sadness  | XX.XX     | XX.XX  | XX.XX    |
-| Joy      | XX.XX     | XX.XX  | XX.XX    |
-| Love     | XX.XX     | XX.XX  | XX.XX    |
-| Anger    | XX.XX     | XX.XX  | XX.XX    |
-| Fear     | XX.XX     | XX.XX  | XX.XX    |
-| Surprise | XX.XX     | XX.XX  | XX.XX    |
+| Emotion  | Precision | Recall | F1-score | Support |
+| -------- | --------- | ------ | -------- | ------- |
+| Sadness  | 0.9625    | 0.8847 | 0.9220   | 581     |
+| Joy      | 0.9251    | 0.9065 | 0.9157   | 695     |
+| Love     | 0.7241    | 0.9245 | 0.8122   | 159     |
+| Anger    | 0.8750    | 0.8909 | 0.8829   | 275     |
+| Fear     | 0.9034    | 0.8348 | 0.8677   | 224     |
+| Surprise | 0.6105    | 0.8788 | 0.7205   | 66      |
+| **Macro avg**    | 0.8335 | 0.8867 | 0.8535 | 2000 |
+| **Weighted avg** | 0.9003 | 0.8905 | 0.8930 | 2000 |
+
+**Top 5 misclassifications (actual → predicted):**
+
+| Actual  | Predicted | Samples |
+| ------- | --------- | ------- |
+| Joy     | Love      | 50      |
+| Sadness | Joy       | 26      |
+| Sadness | Anger     | 23      |
+| Fear    | Surprise  | 22      |
+| Sadness | Fear      | 11      |
 
 **Graphs generated in the notebook:** class distribution, text-length distribution, training/validation accuracy, training/validation loss, per-class precision/recall/F1, confusion matrix (counts and normalised), prediction-probability chart.
 
 ### Observations
 
-- The model performs well above the majority-class baseline (~33%, always predicting *Joy*).
-- Frequent classes (Joy, Sadness, Anger, Fear) score higher than the rare classes (Love, Surprise) because they have fewer training examples.
-- The most common errors occur between semantically close emotions such as **Joy ↔ Love** and **Fear ↔ Surprise**.
-- Training and validation curves stay close and EarlyStopping restores the best epoch, so overfitting is controlled.
+- The model reaches **89.05% test accuracy**, far above the majority-class baseline of about 33% (always predicting *Joy*).
+- **Sadness (F1 0.922) and Joy (F1 0.916)** are predicted best. **Surprise (F1 0.721)** and **Love (F1 0.812)** are hardest because they have the fewest training examples (3.6% and 8.2%).
+- Surprise and Love have **high recall but lower precision** (0.88 vs 0.61 and 0.92 vs 0.72). This is the effect of class weights: minority classes are found more often, at the cost of some false positives. This is why macro recall (0.887) is higher than macro precision (0.834).
+- The main confusions are between semantically close emotions: **Joy → Love (50 samples)** and **Fear → Surprise (22 samples)**. Sadness is also sometimes confused with Joy, Anger and Fear.
+- The model **starts to overfit after epoch 3**: training accuracy keeps rising (to about 98%) while validation loss increases. EarlyStopping with `restore_best_weights` handles this, and the small gap between validation (90.75%) and test (89.05%) accuracy shows the restored model generalises well.
+- Custom sentence tests were mostly correct, but "i adore you and i want to spend my whole life with you" was predicted as Joy (72%) instead of Love, which matches the Joy/Love confusion above.
 
 ---
 
 ## ✅ Conclusion
 
-An Embedding + LSTM network was successfully trained to classify text into six emotions on the Emotion dataset. The LSTM captures word order and context, which a bag-of-words approach cannot, and it classifies unseen text reliably. Limitations are the class imbalance, confusion between similar emotions, and the embeddings being learned from scratch on a small dataset.
+An Embedding + LSTM network was successfully trained to classify text into six emotions on the Emotion dataset, reaching **89.05% test accuracy, 0.8535 macro F1 and 0.8930 weighted F1**. The LSTM captures word order and context, which a bag-of-words approach cannot, and it classifies unseen text reliably. Class weights improved recall on rare classes, and EarlyStopping limited overfitting by restoring the best epoch.
+
+**Limitations:** class imbalance (Surprise and Love have lower precision), confusion between similar emotions (Joy/Love, Fear/Surprise), and embeddings learned from scratch on a small dataset.
 
 **Possible improvements:** Bidirectional LSTM / GRU, pre-trained embeddings (GloVe, Word2Vec, FastText), attention mechanisms, transformer models such as BERT / DistilBERT, and hyper-parameter tuning.
 
@@ -135,7 +159,7 @@ An Embedding + LSTM network was successfully trained to classify text into six e
 GenAI-Text-Classification-using-Embedding-and-LSTM/
 │
 ├── README.md                          ← this file
-├── Practical_02_Emotion_LSTM.ipynb    ← main notebook (executed, with outputs)
+├── 202401110046_Sneha_Practical_02_LSTM.ipynb    ← main notebook (executed, with outputs)
 └── Practical_02_Report.pdf            ← assignment report
 ```
 
@@ -147,7 +171,7 @@ The dataset is loaded from Hugging Face inside the notebook, so no dataset folde
 
 **Option 1 — Google Colab (recommended)**
 
-1. Open `Practical_02_Emotion_LSTM.ipynb` in Google Colab (`File → Upload notebook`).
+1. Open `202401110046_Sneha_Practical_02_LSTM.ipynb` in Google Colab (`File → Upload notebook`).
 2. Select a GPU: `Runtime → Change runtime type → T4 GPU` (optional, faster).
 3. Run all cells: `Runtime → Run all`.
 
@@ -157,10 +181,10 @@ The dataset is loaded from Hugging Face inside the notebook, so no dataset folde
 git clone https://github.com/Sneha529-oss/GenAI-Text-Classification-using-Embedding-and-LSTM.git
 cd GenAI-Text-Classification-using-Embedding-and-LSTM
 pip install tensorflow datasets numpy pandas matplotlib seaborn scikit-learn jupyter
-jupyter notebook Practical_02_Emotion_LSTM.ipynb
+jupyter notebook 202401110046_Sneha_Practical_02_LSTM.ipynb
 ```
 
-Training takes about 2–5 minutes on a GPU.
+Training takes about one minute on a GPU (7 epochs, ~2 s per epoch).
 
 ---
 
