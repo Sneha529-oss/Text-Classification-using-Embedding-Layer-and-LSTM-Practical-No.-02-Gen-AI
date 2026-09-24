@@ -225,7 +225,7 @@ jupyter
 
 ---
 
-## 📝 Declaration
+## Declaration
 
 I, **Sneha Chaurasia**, confirm that this implementation was prepared for Practical Assignment 2 and that the results presented are generated from the experiments performed in this notebook.
 
