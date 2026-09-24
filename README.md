@@ -167,7 +167,7 @@ The dataset is loaded from Hugging Face inside the notebook, so no dataset folde
 
 ---
 
-## ⚙️ How to Run
+## How to Run
 
 **Option 1 — Google Colab (recommended)**
 
@@ -188,7 +188,7 @@ Training takes about one minute on a GPU (7 epochs, ~2 s per epoch).
 
 ---
 
-## 📦 Requirements
+## Requirements
 
 ```
 tensorflow
@@ -203,7 +203,7 @@ jupyter
 
 ---
 
-## ✅ Submission Checklist
+## Submission Checklist
 
 - [x] Code file (Jupyter Notebook, executed end-to-end)
 - [x] Dataset source link included above
@@ -216,7 +216,7 @@ jupyter
 
 ---
 
-## 📖 References
+## References
 
 1. Saravia, E., Liu, H.-C. T., Huang, Y.-H., Wu, J., & Chen, Y.-S. (2018). *CARER: Contextualized Affect Representations for Emotion Recognition.* EMNLP 2018.
 2. Emotion Dataset (Hugging Face): <https://huggingface.co/datasets/dair-ai/emotion>
